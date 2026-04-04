@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import taskAPI from '/src/api/tasksAPI'
+import tasksAPI from '../api/tasksAPI'
 
 const useTasks = () => {
 	const [tasks, setTasks] = useState([])
 
 	const [newTaskTitle, setNewTaskTitle] = useState('')
 	const [searchQuery, setSearchQuery] = useState('')
+	const [disappearingTaskId, setDisappearingTaskId] = useState(null)
+	const [appearingTaskId, setAppearingTaskId] = useState(null)
 
 	const newTaskInputRef = useRef(null)
 
@@ -13,14 +15,18 @@ const useTasks = () => {
 		const isConfirmed = confirm('Are you sure you want to delete all?')
 
 		if (isConfirmed) {
-			taskAPI.deleteAll(tasks).then(() => setTasks([]))
+			tasksAPI.deleteAll(tasks).then(() => setTasks([]))
 		}
 	}, [tasks])
 
 	const deleteTask = useCallback(
 		taskId => {
-			taskAPI.delete(taskId).then(() => {
-				setTasks(tasks.filter(task => task.id !== taskId))
+			tasksAPI.delete(taskId).then(() => {
+				setDisappearingTaskId(taskId)
+				setTimeout(() => {
+					setTasks(tasks.filter(task => task.id !== taskId))
+					setDisappearingTaskId(null)
+				}, 400)
 			})
 		},
 		[tasks]
@@ -28,7 +34,7 @@ const useTasks = () => {
 
 	const toggleTaskComplete = useCallback(
 		(taskId, isDone) => {
-			taskAPI.toggleComplete(taskId, isDone).then(() => {
+			tasksAPI.toggleComplete(taskId, isDone).then(() => {
 				setTasks(
 					tasks.map(task => {
 						if (task.id === taskId) {
@@ -49,18 +55,22 @@ const useTasks = () => {
 			isDone: false,
 		}
 
-		taskAPI.add(newTask).then(addedTask => {
+		tasksAPI.add(newTask).then(addedTask => {
 			setTasks(prevTasks => [...prevTasks, addedTask])
 			setNewTaskTitle('')
 			setSearchQuery('')
 			newTaskInputRef.current.focus()
+			setAppearingTaskId(addedTask.id)
+			setTimeout(() => {
+				setAppearingTaskId(null)
+			}, 400)
 		})
 	}, [])
 
 	useEffect(() => {
 		newTaskInputRef.current.focus()
 
-		taskAPI.getAll().then(setTasks)
+		tasksAPI.getAll().then(setTasks)
 	}, [])
 
 	const filteredTasks = useMemo(() => {
@@ -85,6 +95,8 @@ const useTasks = () => {
 		setSearchQuery,
 		newTaskInputRef,
 		addTask,
+		disappearingTaskId,
+		appearingTaskId,
 	}
 }
 
