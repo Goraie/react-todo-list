@@ -1,6 +1,6 @@
 import { TasksContext } from '@/entities/todo'
 import RouterLink from '@/shared/ui/RouterLink'
-import { highlightCaseInsenitive } from '@/shared/utils/highlight'
+import { highlightCaseInsensitive } from '@/shared/utils/highlight'
 import { memo, useContext } from 'react'
 import styles from './TodoItem.module.scss'
 
@@ -17,7 +17,7 @@ const TodoItem = props => {
 		searchQuery,
 	} = useContext(TasksContext)
 
-	const highlightedTitle = highlightCaseInsenitive(title, searchQuery)
+	const highlightedTitle = highlightCaseInsensitive(title, searchQuery)
 
 	return (
 		<li

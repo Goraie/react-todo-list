@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
 	const isProd = mode === 'production'
 
 	return {
-		base: isProd ? '/React-ToDo-List' : '/',
+		base: isProd ? '/react-todo-list/' : '/',
 		plugins: [react()],
 		resolve: {
 			alias: {

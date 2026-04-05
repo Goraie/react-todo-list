@@ -4,12 +4,14 @@ const read = () => {
 	try {
 		return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
 	} catch (error) {
-		return '[]'
+		return []
 	}
 }
+
 const write = tasks => {
 	localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks))
 }
+
 const delay = (ms = 150) => {
 	return new Promise(resolve => setTimeout(resolve, ms))
 }
@@ -43,12 +45,12 @@ const localAPI = {
 	delete: async id => {
 		await delay()
 
-		const tasks = read().filter(task => task.id === id)
+		const tasks = read().filter(task => task.id !== id)
 
 		write(tasks)
 	},
 
-	deleteAll: async () => {
+	deleteAll: async tasks => {
 		await delay()
 
 		write([])
