@@ -1,7 +1,8 @@
-import { createContext } from 'react'
+import { createContext, useMemo } from 'react'
 import useIncompleteTaskScroll from './useIncompleteTaskScroll'
 import useTasks from './useTasks'
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const TasksContext = createContext({})
 
 export const TasksProvider = props => {
@@ -13,8 +14,6 @@ export const TasksProvider = props => {
 		deleteTask,
 		deleteAllTasks,
 		toggleTaskComplete,
-		newTaskTitle,
-		setNewTaskTitle,
 		searchQuery,
 		setSearchQuery,
 		newTaskInputRef,
@@ -26,27 +25,39 @@ export const TasksProvider = props => {
 	const { firstIncompleteTaskRef, firstIncompleteTaskId } =
 		useIncompleteTaskScroll(tasks)
 
-	return (
-		<TasksContext.Provider
-			value={{
-				tasks,
-				filteredTasks,
-				firstIncompleteTaskRef,
-				firstIncompleteTaskId,
-				deleteTask,
-				deleteAllTasks,
-				toggleTaskComplete,
-				newTaskTitle,
-				setNewTaskTitle,
-				searchQuery,
-				setSearchQuery,
-				newTaskInputRef,
-				addTask,
-				disappearingTaskId,
-				appearingTaskId,
-			}}
-		>
-			{children}
-		</TasksContext.Provider>
+	const value = useMemo(
+		() => ({
+			tasks,
+			filteredTasks,
+			deleteTask,
+			deleteAllTasks,
+			toggleTaskComplete,
+
+			searchQuery,
+			setSearchQuery,
+			newTaskInputRef,
+			addTask,
+			disappearingTaskId,
+			appearingTaskId,
+			firstIncompleteTaskRef,
+			firstIncompleteTaskId,
+		}),
+		[
+			tasks,
+			filteredTasks,
+			deleteTask,
+			deleteAllTasks,
+			toggleTaskComplete,
+			searchQuery,
+			setSearchQuery,
+			newTaskInputRef,
+			addTask,
+			disappearingTaskId,
+			appearingTaskId,
+			firstIncompleteTaskRef,
+			firstIncompleteTaskId,
+		]
 	)
+
+	return <TasksContext.Provider value={value}>{children}</TasksContext.Provider>
 }
