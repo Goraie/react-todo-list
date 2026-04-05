@@ -8,10 +8,10 @@ const escapeHTML = unsafeString => {
 }
 
 const escapeRegExp = unsafeString => {
-	return unsafeString.replace(/[.*+?${}()|[\]||]/g, '\\$&')
+	return unsafeString.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
-export const highlightCaseInsenitive = (text, query) => {
+export const highlightCaseInsensitive = (text, query) => {
 	const safeText = escapeHTML(text)
 	const queryFormatted = query.trim()
 
